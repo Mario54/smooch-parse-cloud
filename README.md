@@ -46,7 +46,7 @@ Calling the function to sign the JWT from your iOS, Android or JavaScript is don
 
 ### Android
 
-```android
+```java
 public class MainActivity extends ActionBarActivity {
 
   @Override
@@ -81,4 +81,24 @@ protected void onActivityResult (int requestCode, int resultCode, Intent data) {
 ### iOS
 
 
+
 ### JavaScript
+
+```javascript
+Parse.User.logIn("myname", "mypass", {
+  success: function(user) {
+	  Parse.Cloud.run('generateJWT')
+	  	.then(function (res) {
+			return Smooch.init({
+				appToken: '<app-token-here>',
+				jwt: res,
+				userId: userId
+			});
+		});
+  },
+  error: function(user, error) {
+    // The login failed. Check error to see why.
+  }
+});
+
+```
