@@ -59,18 +59,21 @@ public class MainActivity extends ActionBarActivity {
 
   }
 
-protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  if (resultCode == RESULT_OK) {
-		ParseCloud.callFunctionInBackground("generateJWT", null, new FunctionCallback() {
-		      public void done(Object object, ParseException e) {
-		        if (e == null) {
-					// use object
-				 	Smooch.login(userId, jwt);
-		        } else {
-		          	// handle error...
-		        }
-		      }
-		});
+		  Map<String, String> emptyMap = new HashMap<>();
+
+		  ParseCloud.callFunctionInBackground("generateJWT", emptyMap, new FunctionCallback<String>() {
+			  public void done(String jwt, ParseException e) {
+				  if (e == null) {
+					  String userId = ParseUser.getCurrentUser().getObjectId();
+					  Smooch.login(userId, jwt);
+					  ConversationActivity.show(MainActivity.this);
+				  } else {
+					  // handle error...
+				  }
+			  }
+		  });
 	  }
   }
 
