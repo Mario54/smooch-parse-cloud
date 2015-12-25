@@ -33,6 +33,27 @@ To add the Smooch Cloud Code module, you will first have to open your terminal a
 Now, the Smooch Cloud module is added to your Cloud Code application. To use the module, you will have to modify the entry point of your application, `main.js`.
 
 ```javascript
+var Smooch = require('cloud/smooch/smooch.js');
+
+var kid = '<your-smooch-key-id>';
+var secretKey = '<your-smooch-secret-key>';
+
+Parse.Cloud.define("generateJWT", function(request, response) {
+  if (!request.user) {
+    return void response.error("No authenticated user");
+  }
+
+  response.success(Smooch.init(request.user, kid, secretKey).getJWT());
+});
+
+Parse.Cloud.afterSave(Parse.User, function(request, response) {
+  var smooch = Smooch.init(request.object);
+
+  smooch.updateUser()
+    .then(function() {
+      response.success('user updated');
+    });
+});
 ```
 
 After adding the Smooch Cloud Code module to your application and modifying the `main.js` file, you can deploy the application:
