@@ -1,21 +1,21 @@
 # Smooch Cloud Code Module
 
-Smooch itself does not offer a way to authenticate users (passwords are not stored in the database). Therefore you need to your own backend in order to have user authentication.
-
-Parse.com offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about maintaining your own backend.
+Smooch itself doesn't offer a way to authenticate users. Therefore you need your own backend in order to have user authentication.
 
 Using Parse with Smooch is an easy way to get started building apps without having to get lost in the multitudes of ways to build a backend.
 
-Sign up for [Parse](parse.com) and [Smooch](smooch.io), and start implementing your cool idea.
+Parse.com offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about maintaining your own backend.
+
+Sign up for [Parse](https://parse.com) and [Smooch](https://smooch.io), and start implementing your cool idea.
 
 ## How it Works
 This Cloud Code module offers a way to easily:
 - Generate JWTs needed to securely interact with Smooch's REST API
 - Share Parse user properties with Smooch user properties
 
-You will have to add the code in this repo to your Parse Cloud Code application. If you don't already have a Parse Cloud Code  application, follow the instructions [here](https://parse.com/docs/cloudcode/guide#command-line) to create one.
+You will have to add the code in this repo to your Parse Cloud Code application. If you don't already have a Parse Cloud Code application, follow the instructions [here](https://parse.com/docs/cloudcode/guide#command-line) to create one.
 
-# Adding the Smooch Cloud Code Module
+## Adding the Smooch Cloud Code Module
 
 To use Parse with Smooch, you will have to add this module to your Cloud Code application.
 
@@ -26,13 +26,26 @@ A cloud code application is structured this way:
     |- main.js
 ```
 
-To add the Smooch Cloud Code module, you will first have to open your terminal and navigate to the `cloud` directory of your Cloud Code project and clone this repository:
-`$ cd cloud`
-`$ git clone ...`
+To add the Smooch Cloud Code module, you will first have to open your terminal and navigate to the `cloud` directory of your Cloud Code project, and then clone this repository:
+```
+$ cd cloud`
+$ git clone git@github.com:Mario54/smooch-parse-cloud.git
+```
 
-Now, the Smooch Cloud module is added to your Cloud Code application. To use the module, you will have to modify the entry point of your application, `main.js`.
+Now, the Smooch module is added to your Cloud Code application. Your Parse Cloud Code application should look like this:
+```
+ |- public
+ |- cloud
+	|- smooch
+		|- lib
+		|- smooch.js
+	|- main.js
+```
+
+To use the `smooch/smooch.js` module, you will have to modify the entry point of your application, `main.js`.
 
 ```javascript
+// main.js
 var Smooch = require('cloud/smooch/smooch.js');
 
 var kid = '<your-smooch-key-id>';
@@ -57,13 +70,15 @@ Parse.Cloud.afterSave(Parse.User, function(request, response) {
 ```
 
 After adding the Smooch Cloud Code module to your application and modifying the `main.js` file, you can deploy the application:
-`$ parse deploy`
+```
+$ parse deploy
+```
 
-You can now use Smooch with your Parse app. User properties changed in Parse will be updated in Smooch, and you can generate a JWT by calling the `generateJWT` function that we defined in your Cloud Code application.
+You can now use Smooch with your Parse app. User properties changed in Parse will be updated in Smooch automatically, and you can generate a valid Smooch JWT by calling the `generateJWT` function that defined in the `main.js` file of your Cloud Code application.
 
-# Using Parse with Smooch in your iOS, Android or JavaScript app
+## Using Parse and Smooch in your app
 
-Calling the function to sign the JWT from your iOS, Android or JavaScript is done through the respective [Parse SDK](https://parse.com/docs). All the SDKs provide a way to call the Cloud Code function that was defined in the last section, `generateJWT`. The function we added needs to be called after a user is logged in using a Parse SDK. Examples are given for how to use it for the Android, iOS and JavaScript SDK.
+To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. The `generateJWT` function needs to be called after a user is logged in using a Parse SDK. After the JWT is generated, you can pass it to a Smooch SDK to securely interact with Smooch. Examples are given for how to use it for the Android, iOS and JavaScript SDK.
 
 ### Android
 
@@ -76,8 +91,6 @@ public class MainActivity extends ActionBarActivity {
     setContentView(R.layout.activity_main);
       ParseLoginBuilder builder = new ParseLoginBuilder(MainActivity.this);
       startActivityForResult(builder.build(), 0);
-
-
   }
 
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -97,7 +110,6 @@ public class MainActivity extends ActionBarActivity {
 		  });
 	  }
   }
-
 }
 
 ```
@@ -109,20 +121,17 @@ public class MainActivity extends ActionBarActivity {
 ### JavaScript
 
 ```javascript
-Parse.User.logIn("myname", "mypass", {
-  success: function(user) {
-	  Parse.Cloud.run('generateJWT')
-	  	.then(function (res) {
-			return Smooch.init({
-				appToken: '<app-token-here>',
-				jwt: res,
-				userId: userId
-			});
+Parse.User.logIn("myname", "mypass")
+	.then(function(user) {
+		Parse.Cloud.run('generateJWT')
+			.then(function (res) {
+				return Smooch.init({
+					appToken: '<app-token-here>',
+					jwt: res,
+					userId: userId
+				});
 		});
-  },
-  error: function(user, error) {
-    // The login failed. Check error to see why.
-  }
-});
-
+	}, function(user, error) {
+    	// The login failed. Check error to see why.
+	});
 ```
