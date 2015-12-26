@@ -1,14 +1,12 @@
 # Smooch Cloud Code Module
 
-Smooch itself doesn't offer a way to authenticate users. Therefore you need your own backend in order to have user authentication.
+Smooch itself doesn't offer a way to authenticate users. Therefore you need your own backend in order to have user authentication (i.e. login).
 
-Using Parse with Smooch is an easy way to get started building apps without having to get lost in the multitudes of ways to build a backend.
+Parse.com offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about creating and maintaining your own backend. It's perfect for implementing your cool idea quickly.
 
-Parse.com offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about maintaining your own backend.
+You need a [Parse](https://parse.com) and [Smooch](https://smooch.io) account to get started.
 
-Sign up for [Parse](https://parse.com) and [Smooch](https://smooch.io), and start implementing your cool idea.
-
-## How it Works
+## Why use this module?
 This Cloud Code module offers a way to easily:
 - Generate JWTs needed to securely interact with Smooch's REST API
 - Share Parse user properties with Smooch user properties
@@ -16,7 +14,6 @@ This Cloud Code module offers a way to easily:
 You will have to add the code in this repo to your Parse Cloud Code application. If you don't already have a Parse Cloud Code application, follow the instructions [here](https://parse.com/docs/cloudcode/guide#command-line) to create one.
 
 ## Adding the Smooch Cloud Code Module
-
 To use Parse with Smooch, you will have to add this module to your Cloud Code application.
 
 A cloud code application is structured this way:
@@ -48,21 +45,35 @@ To use the `smooch/smooch.js` module, you will have to modify the entry point of
 // main.js
 var Smooch = require('cloud/smooch/smooch.js');
 
-var kid = '<your-smooch-key-id>';
-var secretKey = '<your-smooch-secret-key>';
+var kid = '<smooch-key-id>';
+var secretKey = '<smooch-secret-key>';
+
+Smooch.setOptions({
+  kid: kid,
+  secretKey: secretKey
+});
 
 Parse.Cloud.define("generateJWT", function(request, response) {
   if (!request.user) {
     return void response.error("No authenticated user");
   }
 
-  response.success(Smooch.init(request.user, kid, secretKey).getJWT());
+  response.success(Smooch.setParseUser(request.user).getJWT());
 });
 
-Parse.Cloud.afterSave(Parse.User, function(request, response) {
-  var smooch = Smooch.init(request.object);
+function mapToSmoochProperties(parseUser) {
+  return {
+    email: parseUser.get('email'),
+    givenName: parseUser.get('name'),
+    properties: {
+      emailVerified: parseUser.get('emailVerified')
+    /// ...
+    }
+  };
+}
 
-  smooch.updateUser()
+Parse.Cloud.afterSave(Parse.User, function(request, response) {
+  Smooch.setParseUser(request.object).update(mapToSmoochProperties)
     .then(function() {
       response.success('user updated');
     });

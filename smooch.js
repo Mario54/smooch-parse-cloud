@@ -1,6 +1,11 @@
 var KJUR = require("cloud/smooch/lib/jsrsasign/jsrsasign.js");
 
-function init(parseUser, kid, secretKey) {
+var endpoint = 'https://api.smooch.io';
+
+var kid;
+var secretKey;
+
+function setParseUser(parseUser) {
   var jwt = KJUR.jws.JWS.sign("HS256", JSON.stringify({
     alg: "HS256",
     typ: "JWT",
@@ -11,15 +16,15 @@ function init(parseUser, kid, secretKey) {
   }), secretKey);
 
   return {
-    updateUser: function updateUser(userProperties) {
+    update: function updateUser(mapToSmoochProperties) {
       return Parse.Cloud.httpRequest({
         method: 'PUT',
-        url: 'https://api.smooch.io/v1/appusers/' + parseUser.id,
+        url: endpoint + '/v1/appusers/' + parseUser.id,
         headers: {
           'Content-Type': 'application/json;charset=utf-8',
           'authorization': 'Bearer ' + jwt
         },
-        body: userProperties
+        body: mapToSmoochProperties(parseUser)
       });
     },
     getJWT: function() {
@@ -29,5 +34,11 @@ function init(parseUser, kid, secretKey) {
 }
 
 module.exports = {
-  init: init
+  setParseUser: setParseUser,
+  setOptions: function(options) {
+    options = options || {};
+
+    kid = options.kid || kid;
+    secretKey = options.secretKey || secretKey;
+  }
 };
