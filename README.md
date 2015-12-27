@@ -1,8 +1,10 @@
 # Smooch Cloud Code Module
 
-Smooch itself doesn't offer a way to authenticate users. Therefore you need your own backend in order to have user authentication (i.e. login).
+[Smooch](https://smooch.io) is the best way to have personal, rich conversations with your customers online or in your mobile app. In addition to awesome integrations, it provides easy-to-setup SDKs for iOS, Android and JavaScript as well as a REST API. 
 
-[Parse](https://parse.com) is a good solution to this problem since it provides simple user management (authorization, authentication, sessions, etc.) as well as database services for mobile, desktop, and embedded devices. By using Parse, you don't need to worry about creating and maintaining your own backend. It's perfect for quickly implementing your cool idea or if you don't need a complex backend.
+Since Smooch itself doesn't offer a way to authenticate users, you need your own backend in order to implement user authentication (i.e. login).
+
+[Parse](https://parse.com) is a good solution to this problem since it provides dead simple user management (authorization, authentication, sessions, etc.) as well as database services for mobile, desktop, and embedded devices. By using Parse, you don't need to worry about creating and maintaining your own backend. It's perfect for quickly implementing your cool idea or if you don't need a complex backend.
 
 Parse also offers Cloud Code, a platform to run arbitrary code to augment your Parse application which the module in this repository is built for.
 
@@ -14,7 +16,7 @@ Below is a guide for how to use the Smooch Cloud Code module
 
 ## Why use this module?
 The Smooch Cloud Code module offers a way to easily:
-- Generate JWTs needed to securely interact with Smooch's REST API
+- Generate JWTs needed to securely interact with Smooch's SDKs and REST API
 - Share Parse user properties with Smooch user properties
 
 Going forward, it is assumed that you already have a Parse Cloud Code application. If you don't have one, follow the instructions [here](https://parse.com/docs/cloudcode/guide#command-line) to create one.
