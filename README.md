@@ -2,11 +2,15 @@
 
 Smooch itself doesn't offer a way to authenticate users. Therefore you need your own backend in order to have user authentication (i.e. login).
 
-Parse offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about creating and maintaining your own backend. It's perfect for quickly implementing your cool idea.
+Parse offers a backend as a service for mobile, desktop, and embedded devices. With it you don't need to worry about creating and maintaining your own backend. It's perfect for quickly implementing your cool idea or if you don't need a complex backend.
 
-Parse provides user management services (authorization, authentication, sessions, etc.), so you don't have to worry about it. In addition to users, you can store arbitrary data in the database. Parse also offers the Cloud Code service, a way to run arbitrary code to augment your Parse application. This module is for the Cloud Code service.
+In addition to user management (authorization, authentication, sessions, etc.) and database services, Parse offers the Cloud Code platform, a way to run arbitrary code to augment your Parse application. This module is for the Cloud Code service.
 
 To get started, you need a [Parse](https://parse.com) and [Smooch](https://smooch.io) account.
+
+Below is a guide for how to use the Smooch Cloud Code module
+- [Adding the Smooch module to your Cloud Code application](#adding-the-smooch-cloud-code-module)
+- [Using Parse and Smooch in your app](#using-parse-and-smooch-in-your-app)
 
 ## Why use this module?
 The Smooch Cloud Code module offers a way to easily:
@@ -56,6 +60,8 @@ Smooch.setOptions({
 });
 ```
 
+### generateJWT function
+
 Then, we will define a new Cloud Code function that will be used to sign JWTs that will be passed to Smooch in a SDK or when calling the REST API. You will notice that the `generateJWT` function assumes that a user is logged in.
 
 ```javascript
@@ -67,6 +73,8 @@ Parse.Cloud.define("generateJWT", function(request, response) {
   response.success(Smooch.withParseUser(request.user).getJWT());
 });
 ```
+
+### Syncing Parse User properties with Smooch
 
 We will also add a hook that will trigger when a Parse User is modified. When run, it will use the Parse User's properties to update the associated `appUser` in Smooch with any new properties. Since Smooch expects [a flat object in the properties key](http://docs.smooch.io/rest/#update) of the `appUser`, we will have to do some manipulation.
 
@@ -101,6 +109,7 @@ The `mapToSmoochProperties` function can be customized as you want. The `.update
 }
 ```
 
+### Deploying Your Parse Code Cloud Application
 After adding the Smooch Cloud Code module to your application and modifying the `main.js` file, you can deploy the application:
 ```
 $ parse deploy
