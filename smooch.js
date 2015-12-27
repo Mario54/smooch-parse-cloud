@@ -2,34 +2,36 @@ var KJUR = require("cloud/smooch/lib/jsrsasign/jsrsasign.js");
 
 var endpoint = 'https://api.smooch.io';
 
-var kid;
-var secretKey;
+var keyId;
+var secret;
 
 var userIdKey;
 
 function withParseUser(parseUser) {
+  var userId = (userIdKey ? parseUser.get(userIdKey) : parseUser.id);
+
   var jwt = KJUR.jws.JWS.sign("HS256", JSON.stringify({
     alg: "HS256",
     typ: "JWT",
-    kid: kid
+    kid: keyId
   }), JSON.stringify({
     scope: 'appUser',
-    userId: parseUser.id
-  }), secretKey);
+    userId: userId
+  }), secret);
 
   return {
     update: function update(mapToSmoochProperties) {
       var smoochPropertiesPromise = mapToSmoochProperties(parseUser);
 
       if (!Parse.Promise.is(smoochPropertiesPromise)) {
-        smoochPropertiesPromise = Parse.Promise.as(properties);
+        smoochPropertiesPromise = Parse.Promise.as(smoochPropertiesPromise);
       }
 
       return smoochPropertiesPromise
         .then(function(userProperties) {
           return Parse.Cloud.httpRequest({
             method: 'PUT',
-            url: endpoint + '/v1/appusers/' + (userIdKey ? parseUser.get(userIdKey) : parseUser.id),
+            url: endpoint + '/v1/appusers/' + userId,
             headers: {
               'Content-Type': 'application/json;charset=utf-8',
               'authorization': 'Bearer ' + jwt
@@ -49,8 +51,8 @@ module.exports = {
   setOptions: function(options) {
     options = options || {};
 
-    kid = options.kid || kid;
-    secretKey = options.secretKey || secretKey;
+    keyId = options.keyId || keyId;
+    secret = options.secret || secret;
     userIdKey = options.userIdKey;
   }
 };

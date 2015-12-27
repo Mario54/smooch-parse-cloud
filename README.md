@@ -47,14 +47,13 @@ To use the `smooch/smooch.js` module, you will have to modify the entry point of
 // main.js
 var Smooch = require('cloud/smooch/smooch.js');
 
-var kid = '<smooch-key-id>';
-var secretKey = '<smooch-secret-key>';
+var keyId = '<smooch-key-id>';
+var secret = '<smooch-secret-key>';
 
 Smooch.setOptions({
-  kid: kid,
-  secretKey: secretKey
+  keyId: keyId,
+  secret: secret
 });
-
 ```
 
 Then, we will define a new Cloud Code function that will be used to sign JWTs that will be passed to Smooch in a SDK or when calling the REST API. You will notice that the `generateJWT` function assumes that a user is logged in.
@@ -122,7 +121,37 @@ Smooch.setOptions({
 ```
 
 #### mapToSmoochProperties function
+The `mapToSmoochProperties` can be customized for your Parse setup. For example, if you have a `age` column in your Parse User class, you include it in Smooch's properties:
+```javascript
+function mapToSmoochProperties(parseUser) {
+  return {
+    email: parseUser.get('email'),
+    givenName: parseUser.get('name'),
+    properties: {
+      age: parseUser.get('age')
+    }
+  };
+}
+```
 
+You can also return a `Parse.Promise` in the function. This means you can query some Parse class related to the User class to add properties to the Smooch user. For example, if you have a `Purchase` class that stores user purchases, you could query the number of purchases made by the user to store it in the Smooch user.
+```javascript
+function mapToSmoochProperties(parseUser) {
+  return new Parse.Query('Purchase')
+    .equalTo('purchaser', parseUser)
+    .count()
+    .then(function(numOfPurchases) {
+      return {
+        email: parseUser.get('email'),
+        givenName: parseUser.get('name'),
+        properties: {
+          age: parseUser.get('age'),
+          numberOfPurchases: numOfPurchases
+        }
+      };
+    });
+}
+```
 
 ## Using Parse and Smooch in your app
 
