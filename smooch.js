@@ -5,7 +5,9 @@ var endpoint = 'https://api.smooch.io';
 var kid;
 var secretKey;
 
-function setParseUser(parseUser) {
+var userIdKey;
+
+function withParseUser(parseUser) {
   var jwt = KJUR.jws.JWS.sign("HS256", JSON.stringify({
     alg: "HS256",
     typ: "JWT",
@@ -16,16 +18,25 @@ function setParseUser(parseUser) {
   }), secretKey);
 
   return {
-    update: function updateUser(mapToSmoochProperties) {
-      return Parse.Cloud.httpRequest({
-        method: 'PUT',
-        url: endpoint + '/v1/appusers/' + parseUser.id,
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'authorization': 'Bearer ' + jwt
-        },
-        body: mapToSmoochProperties(parseUser)
-      });
+    update: function update(mapToSmoochProperties) {
+      var smoochPropertiesPromise = mapToSmoochProperties(parseUser);
+
+      if (!Parse.Promise.is(smoochPropertiesPromise)) {
+        smoochPropertiesPromise = Parse.Promise.as(properties);
+      }
+
+      return smoochPropertiesPromise
+        .then(function(userProperties) {
+          return Parse.Cloud.httpRequest({
+            method: 'PUT',
+            url: endpoint + '/v1/appusers/' + (userIdKey ? parseUser.get(userIdKey) : parseUser.id),
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              'authorization': 'Bearer ' + jwt
+            },
+            body: userProperties
+          });
+        });
     },
     getJWT: function() {
       return jwt;
@@ -34,11 +45,12 @@ function setParseUser(parseUser) {
 }
 
 module.exports = {
-  setParseUser: setParseUser,
+  withParseUser: withParseUser,
   setOptions: function(options) {
     options = options || {};
 
     kid = options.kid || kid;
     secretKey = options.secretKey || secretKey;
+    userIdKey = options.userIdKey;
   }
 };

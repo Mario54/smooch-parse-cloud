@@ -65,7 +65,7 @@ Parse.Cloud.define("generateJWT", function(request, response) {
     return void response.error("No authenticated user");
   }
 
-  response.success(Smooch.setParseUser(request.user).getJWT());
+  response.success(Smooch.withParseUser(request.user).getJWT());
 });
 ```
 
@@ -84,15 +84,12 @@ function mapToSmoochProperties(parseUser) {
 }
 
 Parse.Cloud.afterSave(Parse.User, function(request, response) {
-  Smooch.setParseUser(request.object)
-  	.update(mapToSmoochProperties)
-    .then(function() {
-      response.success('user updated');
-    });
+  Smooch.withParseUser(request.object)
+  	.update(mapToSmoochProperties);
 });
 ```
 
-The `mapToSmoochProperties` function can be customized. Just remember that `properties` needs to be a flat object. In other words, it cannot be something like this:
+The `mapToSmoochProperties` function can be customized as you want. The `.update` function expects the `mapToSmoochProperties` to return a normal object (as shown above) or a `Parse.Promise` that is resolved to an object. Just remember that the content of the `properties` key needs to be a flat object. In other words, it cannot be something like this:
 ```javascript
 {
 	email: ...,
@@ -112,9 +109,24 @@ $ parse deploy
 
 You can now use Smooch with your Parse app. User properties changed in Parse will be updated in Smooch automatically, and you can generate a valid Smooch JWT by calling the `generateJWT` function that defined in the `main.js` file of your Cloud Code application.
 
+### Customization
+
+#### Smooch's userId
+By default, the Smooch Cloud Code module uses the Parse Users's `ObjectId` as the Smooch `userId`. You can specify a different key to use when calling `setOptions`. For example, if you want to use the user's email as the Smooch `userId`
+```javascript
+Smooch.setOptions({
+    keyId: ...,
+    secretKey: ...,
+    userIdKey: 'email'
+});
+```
+
+#### mapToSmoochProperties function
+
+
 ## Using Parse and Smooch in your app
 
-To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. Keep in mind, the `generateJWT` function needs to be called after a user is logged in using a Parse SDK. After the JWT is generated, you can pass it to a Smooch SDK to securely interact with Smooch. 
+To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. Keep in mind, the `generateJWT` function needs to be called after a user is logged in using a Parse SDK. After the JWT is generated, you can pass it to a Smooch SDK to securely interact with Smooch.
 
 Examples are given for how to use it for the Android, iOS and JavaScript SDK.
 - [Android](#android)
