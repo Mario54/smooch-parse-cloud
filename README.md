@@ -114,7 +114,12 @@ You can now use Smooch with your Parse app. User properties changed in Parse wil
 
 ## Using Parse and Smooch in your app
 
-To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. Keep in mind, the `generateJWT` function needs to be called after a user is logged in using a Parse SDK. After the JWT is generated, you can pass it to a Smooch SDK to securely interact with Smooch. Examples are given for how to use it for the Android, iOS and JavaScript SDK.
+To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. Keep in mind, the `generateJWT` function needs to be called after a user is logged in using a Parse SDK. After the JWT is generated, you can pass it to a Smooch SDK to securely interact with Smooch. 
+
+Examples are given for how to use it for the Android, iOS and JavaScript SDK.
+- [Android](#android)
+- [iOS](#ios)
+- [JavaScript](#javascript)
 
 ### Android
 You first need to add the [Smooch](http://docs.smooch.io/android/#adding-smooch-to-your-app) and [Parse](https://parse.com/apps/quickstart#parse_data/mobile/android/native/existing) SDK to your Android app.
