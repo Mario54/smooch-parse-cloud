@@ -28,7 +28,7 @@ A cloud code application is structured this way:
 To add the Smooch Cloud Code module, you will first have to open your terminal and navigate to the `cloud` directory of your Cloud Code application, and then clone this repository:
 ```
 $ cd cloud
-$ git clone git@github.com:Mario54/smooch-parse-cloud.git
+$ git clone git@github.com:Mario54/smooch-parse-cloud.git smooch
 ```
 
 Now, the Smooch module is added to your Cloud Code application. Your Parse Cloud Code application should look like this:
