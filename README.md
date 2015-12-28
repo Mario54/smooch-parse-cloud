@@ -153,7 +153,7 @@ function mapToSmoochProperties(parseUser) {
 
 ## Using Parse and Smooch in your app
 
-To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. After the JWT is generated, you can pass it to a Smooch SDK to securely initiliaze a session with Smooch.
+To use Parse in combination with Smooch, you first need to login using one of the Parse SDK. Then, you can call the `generateJWT` function to get a valid Smooch JWT. All the SDKs provide a way to call the Cloud Code function. After the JWT is generated, you can pass it to a Smooch SDK to securely initialize a session with Smooch.
 
 Examples are given for how to use it for the Android, iOS and JavaScript SDK.
 - [Android](#android)
@@ -161,9 +161,9 @@ Examples are given for how to use it for the Android, iOS and JavaScript SDK.
 - [JavaScript](#javascript)
 
 ### Android
-You first need to add the [Smooch](http://docs.smooch.io/android/#adding-smooch-to-your-app) and [Parse](https://parse.com/apps/quickstart#parse_data/mobile/android/native/existing) SDK to your Android app.
+*You first need to add the [Smooch](http://docs.smooch.io/android/#adding-smooch-to-your-app) and [Parse](https://parse.com/apps/quickstart#parse_data/mobile/android/native/existing) SDK to your Android app.*
 
-If you're using user interface provided by Parse you will need to generate the JWT in the `onActivityResult` result callback (see below if you're not using Parse's user interface). After calling the `generateJWT` Code Cloud function, you can now login to the Smooch SDK using `Smooch.login(userId, jwt)`. After the `.login` to Smooch, you can start the `ConversationActivity` to show the conversation interface to the user.
+If you're using [user interface provided by Parse](https://parse.com/docs/android/guide#user-interface) you will need to generate the JWT in the `onActivityResult` result callback (see below if you're not using Parse's user interface). After calling the `generateJWT` Code Cloud function, you can now login to the Smooch SDK using `Smooch.login(userId, jwt)`. After the `.login` to Smooch, you can start the `ConversationActivity` to show the conversation interface to the user.
 
 ```java
 public class MainActivity extends ActionBarActivity {
@@ -223,9 +223,9 @@ ParseUser.logInInBackground("Jerry", "showmethemoney", new LogInCallback() {
 ```
 
 ### iOS
-You first need to add the [Smooch](http://docs.smooch.io/ios/#adding-smooch-to-your-app) and [Parse](https://parse.com/apps/quickstart#parse_data/mobile/ios/native/existing) SDK to your iOS app.
+*You first need to add the [Smooch](http://docs.smooch.io/ios/#adding-smooch-to-your-app) and [Parse](https://parse.com/apps/quickstart#parse_data/mobile/ios/native/existing) SDK to your iOS app.*
 
-If you're using user interface provided by Parse you will need to generate the JWT in the `- (void)logInViewController:(PFLogInViewController *)logInController didLogInUser:(PFUser *)user` delegate (see below if you're not using Parse's user interface). After calling the `generateJWT` Code Cloud function, you can now login to the Smooch SDK using `[Smooch login:userId jwt:jwt)]`. After the `login` to Smooch, you can show the conversation interface using `[Smooch show]`.
+If you're using [user interface provided by Parse](https://parse.com/docs/ios/guide#user-interface) you will need to generate the JWT in the `- (void)logInViewController:(PFLogInViewController *)logInController didLogInUser:(PFUser *)user` delegate (see below if you're not using Parse's user interface). After calling the `generateJWT` Code Cloud function, you can now login to the Smooch SDK using `[Smooch login:userId jwt:jwt)]`. After the `login` to Smooch, you can show the conversation interface using `[Smooch show]`.
 
 ```objective-c
 #import <Parse/Parse.h>
@@ -276,8 +276,6 @@ If you're using user interface provided by Parse you will need to generate the J
             [self dismissViewControllerAnimated:YES completion:^() {
                 [Smooch show];
             }];
-
-
         }
     }];
 }
@@ -314,7 +312,7 @@ Then, you can call `[Smooch show]` to show the conversation interface.
 
 ### JavaScript
 
-You will first need to add the [Smooch](http://docs.smooch.io/javascript/#adding-smooch-to-your-site) and [Parse](https://parse.com/apps/quickstart#parse_data/web/existing) SDK to your JavaScript app.
+*You will first need to add the [Smooch](http://docs.smooch.io/javascript/#adding-smooch-to-your-site) and [Parse](https://parse.com/apps/quickstart#parse_data/web/existing) SDK to your JavaScript app.*
 
 ```javascript
 Parse.User.logIn("myname", "mypass")
